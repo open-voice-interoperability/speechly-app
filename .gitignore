@@ -77,3 +77,6 @@ common/autoinstallers/*/.npmrc
 
 
 tmp-upload-staging-area
+
+# PyCharm project settings
+.idea

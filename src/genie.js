@@ -1,4 +1,4 @@
-const conversation_url = process.env.REACT_APP_BASE_URL || "genie.stanford.edu";
+const base_url = "genie.stanford.edu";
 const access_token = process.env.REACT_APP_ACCESS_TOKEN;
 
 if (access_token === undefined) {
@@ -45,4 +45,4 @@ class ApiClient {
     }
 }
 
-export default new ApiClient(conversation_url, access_token);
+export default new ApiClient(base_url, access_token);
