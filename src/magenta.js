@@ -1,3 +1,5 @@
+import { stringify } from "querystring";
+
 const baseUrl = process.env.REACT_APP_BASE_URL;
 const apiKey = process.env.REACT_APP_API_KEY;
 const access_token = process.env.REACT_APP_MAGENTA_TOKEN || "";
@@ -5,6 +7,28 @@ const testing_secret = process.env.REACT_APP_TESTING_SECRET || "";
 
 if (apiKey === undefined) {
     throw Error("Missing Magenta API key!");
+}
+
+function translate(text, from: text = "en", to: text = "de") {
+    const key = process.env.REACT_APP_GOOGLE_API_KEY;
+    const query = {
+        "key": key,
+        "source": from,
+        "target": to,
+        "q": text
+    };
+    return fetch(`https://translation.googleapis.com/language/translate/v2?${stringify(query)}`, {
+        method: 'GET',
+        headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json"
+        }
+    }).then(response => response.json()).then(
+        translation => {
+            const { data: {translations: [{translatedText}]} } = translation;
+            return translatedText;
+        }
+    );
 }
 
 class ApiClient {
@@ -31,30 +55,33 @@ class ApiClient {
         }).then(response => response.json());
     }
 
-    send_text(text) {
+    async send_text(text) {
         if (this.token === "") {
             return this._test_login().then(response => {
                 this.token = response.token;
                 return this.send_text(text);
             });
         }
-        return fetch(`https://${this.baseURL}/cvi/dm/api/v1/invoke/text/json?intent=true&skill=true&sessionId=null`, {
+        const url = `https://${this.baseURL}/cvi/dm/api/v1/invoke/text/json?intent=true&skill=true&sessionId=null`;
+        const options = {
             method: "POST",
             headers: {
+                "ApiKey": this.apiKey,
                 "Accept": "application/json",
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${this.token}`,
             },
             body: JSON.stringify({
-                "text": text,
+                "text": await translate(text),
             })
-        }).then(response => {
-            if (!response.ok) {
-                throw new Error(`Response status ${response.status} was not ok`);
-            }
-            return response.json();
-        });
+        };
+        const response = await fetch(url, options).then(r => r.json());
+        return {
+            text: await translate(response.text, "de", "en"),
+            raw: response,
+        };
     }
 }
 
 export default new ApiClient(baseUrl, apiKey, access_token);
+

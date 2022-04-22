@@ -5,7 +5,8 @@ import {
   BigTranscript,
   IntroPopup
 } from "@speechly/react-ui";
-import client from "./genie";
+import magenta from "./magenta";
+import genie from "./genie";
 
 
 export default function App() {
@@ -16,12 +17,14 @@ export default function App() {
       const plainString = segment.words.filter(w => w.value).map(w => w.value).join(' ');
       console.log(plainString);
       if (segment.isFinal) {
-        console.log(segment);
         console.log("✅", plainString);
-        client.send_text(plainString).then((r) => {
+        const [agent] = segment.entities.filter(m => m.type === "agent").map(m => m.value);
+        const [utterance] = segment.entities.filter(m => m.type === "utterance").map(m => m.value);
+        const client = agent === "magenta" ? magenta : genie;
+        console.log(`🤖 ${agent}`);
+        client.send_text(agent && utterance ? utterance : plainString).then((r) => {
           console.log(r);
-          const response = r.messages.filter(m => m.type === "text").map(w => w.text).join('\n');
-          window.speechSynthesis.speak(new SpeechSynthesisUtterance(response));
+          window.speechSynthesis.speak(new SpeechSynthesisUtterance(r.text));
         });
       }
     }

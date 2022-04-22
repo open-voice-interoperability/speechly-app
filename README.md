@@ -18,8 +18,17 @@ npm install
 Add `App ID` and auth token to `./.env`:
 
 ```env
+# Genie settings
 REACT_APP_ACCESS_TOKEN="your-access-token"
 REACT_APP_APP_ID="your-app-id"
+
+# Magenta settings
+REACT_APP_BASE_URL="magenta-server-url"
+REACT_APP_API_KEY="magenta-api-key"
+EACT_APP_TESTING_SECRET="magenta-testing-secret"
+
+# Google API key for translation
+REACT_APP_GOOGLE_API_KEY="your-google-api-key"
 ```
 
 Start the development server
@@ -29,5 +38,5 @@ npm start
 ```
 
 Navigate to [localhost:3000](http://localhost:3000) and you should see your app running. 
-Open the Developer Console to see speech segments and raw responses from Genie.
+Open the Developer Console to see speech segments and raw responses from Genie/Magenta.
 

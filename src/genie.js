@@ -41,7 +41,17 @@ class ApiClient {
                     "text": text,
                 },
             })
-        }).then(response => response.json());
+        }).then(response => {
+            if (!response.ok) {
+                throw new Error(`Response status ${response.status} was not ok`);
+            }
+            return response.json().then(r => {
+                return {
+                    text: r.messages.filter(m => m.type === "text").map(w => w.text).join('\n'),
+                    raw: r,
+                };
+            });
+        });
     }
 }
 
