@@ -1,4 +1,5 @@
 import { stringify } from "querystring";
+import { decode } from 'html-entities';
 
 const baseUrl = process.env.REACT_APP_BASE_URL;
 const apiKey = process.env.REACT_APP_API_KEY;
@@ -21,12 +22,12 @@ function translate(text, from: text = "en", to: text = "de") {
         method: 'GET',
         headers: {
             "Content-Type": "application/json",
-            Accept: "application/json"
+            Accept: "application/json; charset=utf-8",
         }
     }).then(response => response.json()).then(
         translation => {
             const { data: {translations: [{translatedText}]} } = translation;
-            return translatedText;
+            return decode(translatedText);
         }
     );
 }
@@ -62,6 +63,8 @@ class ApiClient {
                 return this.send_text(text);
             });
         }
+        const translated = await translate(text);
+        console.log(`🤖 Magenta -> ${translated}`);
         const url = `https://${this.baseURL}/cvi/dm/api/v1/invoke/text/json?intent=true&skill=true&sessionId=null`;
         const options = {
             method: "POST",
@@ -72,7 +75,7 @@ class ApiClient {
                 "Authorization": `Bearer ${this.token}`,
             },
             body: JSON.stringify({
-                "text": await translate(text),
+                "text": translated,
             })
         };
         const response = await fetch(url, options).then(r => r.json());

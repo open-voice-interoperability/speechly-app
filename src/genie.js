@@ -29,6 +29,7 @@ class ApiClient {
     }
 
     send_text(text) {
+        console.log(`🤖 Genie -> ${text}`);
         return fetch(`https://${this.baseURL}/me/api/converse`, {
             method: "POST",
             headers: {
