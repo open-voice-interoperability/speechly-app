@@ -40,3 +40,17 @@ npm start
 Navigate to [localhost:3000](http://localhost:3000) and you should see your app running. 
 Open the Developer Console to see speech segments and raw responses from Genie/Magenta.
 
+
+## Usage
+
+Click and hold Push-to-Talk button at the bottom of the screen.
+
+To ask a single question from Magenta: _**"Ask Magenta <question>"**_, e.g: **_"ask Magenta the weather in London"_**
+
+To ask a single question from Genie: _**"Ask Genie <question>"**_, e.g: **_"ask Genie a joke"_**
+
+To activate Magenta: **_"Launch Magenta"_**. After the launch, all user queries will be sent to Magenta Platform.
+To stop Magenta: **_"Stop Magenta"_**.
+
+
+To connect to Genie cloud : **_"Launch Genie"_**. To terminate connection: **_"Stop Genie"_**.
